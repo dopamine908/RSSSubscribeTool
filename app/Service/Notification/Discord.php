@@ -4,6 +4,7 @@
 namespace App\Service\Notification;
 
 
+use App\Service\Message\MessageFactory;
 use App\Service\RSSFeed\RSSItem;
 
 class Discord
@@ -23,7 +24,8 @@ class Discord
 
     private function initialWebHook()
     {
-        $this->web_hook = 'https://discord.com/api/webhooks/787959967205687306/2ZWfiat0i1wJ3GYl3aFKV6csdP4nSx78wcT9auaB1TpA1OmmpUysvPqGbRgbPDQRJS-I';
+//        $this->web_hook = 'https://discord.com/api/webhooks/787959967205687306/2ZWfiat0i1wJ3GYl3aFKV6csdP4nSx78wcT9auaB1TpA1OmmpUysvPqGbRgbPDQRJS-I';
+        $this->web_hook = config('rss.notify.discord.web_hook');
     }
 
     private function initialHeaders()
@@ -35,20 +37,12 @@ class Discord
 
     private function initialMessage()
     {
-        $this->message = [
-//            'content' => $this->RSSItem->author. ' 有一則新的貼文',
-            'content' => 'TestAuthor 有一則新的貼文',
-            'embeds' => [
-                [
-                    'title' => 'Twitter',
-                    'url' => 'https://gist.github.com/Birdie0/78ee79402a4301b1faf412ab5f1cdcf9',
-                    'description' => $this->RSSItem->content,
-                    'color' => hexdec('#1FA1F1'),
-                    'footer' => [
-                        'text' =>  $this->RSSItem->post_time,
-                    ],
-                ],
-            ],
-        ];
+
+
+        $MessageFactory = new MessageFactory();
+
+//        dump($MessageFactory->createMessage($this->RSSItem, 'Discord'));
+        $this->message = $MessageFactory->createDiscordMessage($this->RSSItem);
+//        dump($this->message);
     }
 }
