@@ -177,6 +177,7 @@ return [
 
 
         Vedmant\FeedReader\FeedReaderServiceProvider::class,
+        NotificationChannels\Discord\DiscordServiceProvider::class,
 
 
     ],
