@@ -2,6 +2,8 @@
 
 namespace App\Console;
 
+use App\Console\Commands\CrawlRSSCommand;
+use App\Service\Dispatcher;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -13,7 +15,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        CrawlRSSCommand::class
     ];
 
     /**
@@ -25,6 +27,10 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
+//        $schedule->call(function (){
+//            $dispatcher = new Dispatcher(new \App\Service\RSSItemFactory());
+//            $dispatcher->execute();
+//        })->everyThirtyMinutes();
     }
 
     /**
