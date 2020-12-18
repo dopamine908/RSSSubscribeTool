@@ -4,10 +4,10 @@
 namespace App\Service;
 
 
+use App\Models\RSSHistory as RSSHistoryModel;
+use App\Repository\RSSHistory;
 use App\Service\Notification\Discord;
-use App\Service\RSSFeed\Github;
-use App\Service\RSSFeed\Nitter;
-use App\Service\RSSFeed\RSSItem;
+use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
@@ -16,10 +16,11 @@ use Vedmant\FeedReader\Facades\FeedReader;
 class Dispatcher
 {
     private $subscribes;
-private $RSSItemFactory;
+    private $RSSItemFactory;
+
     public function __construct(RSSItemFactory $RSS_item_factory)
     {
-        $this->RSSItemFactory=$RSS_item_factory;
+        $this->RSSItemFactory = $RSS_item_factory;
         $this->subscribes = collect(config('rss.subscribe'));
     }
 
@@ -27,21 +28,31 @@ private $RSSItemFactory;
     {
         $this->subscribes->each(
             function ($subscribe) {
+
+                dump('---------------------------------------------');
+
+
+
                 //get feed url
                 $feed_url = $this->getFeedUrl($subscribe);
+//                dump('-------process start------');
+
+                dump($subscribe['type'].'-'.$subscribe['name']);
 
                 //get all rss item
                 $rss_items_original = $this->getAllRSSFeedItemOriginal($feed_url);
 
                 //item translate : item original => RSSItem Object (factory)
                 //filter item whitch want to dispatch
-                $RSSItem = $this->getRSSItem($rss_items_original, $subscribe);
-
+                $RSSItemCollection = $this->getRSSItem($rss_items_original, $subscribe);
                 //generate notification
-                $DiscordNotificationCollection = $this->getDiscordNotificationCollection($RSSItem);
+                $DiscordNotificationCollection = $this->getDiscordNotificationCollection($RSSItemCollection);
 
                 //dispatch all notification
                 $this->dispatchAllNotification($DiscordNotificationCollection);
+
+                //update current post time
+                $this->updateCurrentPostTime($DiscordNotificationCollection, $subscribe);
             }
         );
     }
@@ -53,35 +64,48 @@ private $RSSItemFactory;
 
     private function getAllRSSFeedItemOriginal($feed_url)
     {
-//        dump(FeedReader::read($feed_url));
-//        dump(FeedReader::read($feed_url)->get_items());
-//        exit();
+
         return FeedReader::read($feed_url)->get_items();
     }
 
-    private function getRSSItem($rss_items_original, $subscribe): RSSItem
+    private function getRSSItem($rss_items_original, $subscribe)
     {
-//        dump($rss_items_original);
-//        exit();
-        $rss_item = $rss_items_original[0];
-//        dump($rss_item);
-        dump($subscribe['type']);
 
-        $RSSItem=$this->RSSItemFactory->createRssItem($rss_item, $subscribe);
-        dump($RSSItem);
-//        exit();
-//        $RSSItem = new Nitter($rss_item);
-        return $RSSItem;
+        $RSSHistory = new RSSHistory(new RSSHistoryModel());
+        $LatestPostTime = $RSSHistory->getLatestPost($subscribe['name']);
+        $rss_item = collect($rss_items_original)->filter(
+            function ($rss_item) use ($subscribe, $LatestPostTime) {
+                $rss_item = $this->RSSItemFactory->createRssItem($rss_item, $subscribe);
+                $LatestPostTime = new Carbon($LatestPostTime->CurrentPostTime);
+
+                return $rss_item->post_time->greaterThan($LatestPostTime);
+            }
+        );
+
+        $RSSItemCollection = collect([]);
+        $rss_item->each(
+            function ($rss) use ($subscribe, $RSSItemCollection) {
+                $RSSItemCollection->push($this->RSSItemFactory->createRssItem($rss, $subscribe));
+            }
+        );
+        return $RSSItemCollection;
     }
 
 
-    private function getDiscordNotificationCollection(RSSItem $RSSItem)
+    private function getDiscordNotificationCollection(Collection $RSSItemCollection)
     {
-        return collect([new Discord($RSSItem)]);
+        return $RSSItemCollection->transform(
+            function ($RSSItem) {
+                return new Discord($RSSItem);
+            }
+        );
     }
 
     private function dispatchAllNotification(Collection $DiscordNotificationCollection)
     {
+//        dump('start dispatch');
+//        dump($DiscordNotificationCollection);
+        dump('dispatch  ['.$DiscordNotificationCollection->count(). ']  notification');
         $DiscordNotificationCollection->each(
             function ($DiscordNotification) {
                 $this->dispatch($DiscordNotification);
@@ -91,13 +115,50 @@ private $RSSItemFactory;
 
     private function dispatch($DiscordNotification)
     {
-        $response = Http::withHeaders(
-            $DiscordNotification->headers
-        )->post(
-            $DiscordNotification->web_hook,
-            $DiscordNotification->message
+//        dump($DiscordNotification->web_hook);
+
+//dump($DiscordNotification);
+        $DiscordNotification->web_hook->each(
+            function ($web_hook_target) use ($DiscordNotification) {
+                $response = Http::withHeaders(
+                    $DiscordNotification->headers
+                )->post(
+//                $DiscordNotification->web_hook,
+                    $web_hook_target,
+                    $DiscordNotification->message
+                );
+                dump($response->status());
+            }
         );
-        dump($response->status());
-        dump($response->successful());
+    }
+
+    private function updateCurrentPostTime(Collection $DiscordNotificationCollection, $subscribe)
+    {
+//        dump('---------------------------------------------');
+
+        $NotificationPostTimeCollection = $DiscordNotificationCollection->map(
+            function ($Notification) {
+                return $Notification->RSSItem->post_time;
+            }
+        );
+
+//        dump($DiscordNotificationCollection, $NotificationPostTimeCollection);
+        $LatestCurrentTime = $NotificationPostTimeCollection->first();
+        $NotificationPostTimeCollection->each(
+            function ($Time) use (&$LatestCurrentTime) {
+                if ($Time->greaterThan($LatestCurrentTime)) {
+                    $LatestCurrentTime = $Time;
+                }
+            }
+        );
+
+        if ($NotificationPostTimeCollection->isEmpty()) {
+            $LatestCurrentTime = Carbon::now();
+        }
+//        dump('-------------');
+//        dump($LatestCurrentTime);
+
+        $RSSHistory = new RSSHistory(new RSSHistoryModel());
+        $RSSHistory->updateCurrentTime($subscribe['name'], $LatestCurrentTime);
     }
 }

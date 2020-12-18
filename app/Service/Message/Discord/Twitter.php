@@ -4,7 +4,7 @@
 namespace App\Service\Message\Discord;
 
 
-use App\Service\Message\MessageTemplate;
+use App\NewService\Message\MessageTemplate;
 
 class Twitter extends MessageTemplate
 {
@@ -23,7 +23,7 @@ class Twitter extends MessageTemplate
                     'description' => $RSS_item->content,
                     'color' => hexdec('#1FA1F1'),
                     'footer' => [
-                        'text' => $RSS_item->post_time,
+                        'text' => $RSS_item->post_time->toDateTimeString(),
                     ],
                     "author" => [
                         "name" => $RSS_item->author_show_name,

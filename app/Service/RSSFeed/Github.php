@@ -4,6 +4,7 @@
 namespace App\Service\RSSFeed;
 
 
+use Carbon\Carbon;
 use SimplePie_Item;
 
 class Github extends RSSItem
@@ -12,10 +13,12 @@ class Github extends RSSItem
     /**
      * Github constructor.
      */
-    public function __construct(SimplePie_Item $simple_pie)
+    public function __construct(SimplePie_Item $simple_pie,$observer)
     {
 //        dump($simple_pie);
         $this->source='Github';
+        $this->observer = $observer;
+
         parent::__construct($simple_pie);
     }
 
@@ -62,5 +65,8 @@ class Github extends RSSItem
     protected function initialPostTime()
     {
         $this->post_time = $this->child_data['http://www.w3.org/2005/Atom'] ['updated'][0]['data'];
+//        dump(new Carbon($this->post_time));
+        $this->post_time=new Carbon($this->post_time);
+
     }
 }

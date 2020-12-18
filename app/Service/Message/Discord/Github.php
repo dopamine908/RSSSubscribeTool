@@ -1,11 +1,10 @@
 <?php
 
 
-namespace App\Service\Message\Discord;
+namespace App\NewService\Message\Discord;
 
 
-use App\Service\Message\MessageTemplate;
-use App\Service\RSSFeed\RSSItem;
+use App\NewService\Message\MessageTemplate;
 
 class Github extends MessageTemplate
 {
@@ -23,7 +22,7 @@ class Github extends MessageTemplate
                     'description' => 'release version : '.$RSS_item->content,
                     'color' => hexdec('#000000'),
                     'footer' => [
-                        'text' => $RSS_item->post_time,
+                        'text' => $RSS_item->post_time->toDateTimeString(),
                     ],
                     "author" => [
                         "name" => $RSS_item->author_show_name,

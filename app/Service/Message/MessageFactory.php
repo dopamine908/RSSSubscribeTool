@@ -4,8 +4,8 @@
 namespace App\Service\Message;
 
 
-use App\Service\Message\Discord\Github;
-use App\Service\Message\Discord\Twitter;
+use App\NewService\Message\Discord\Github;
+use App\NewService\Message\Discord\Twitter;
 use App\Service\RSSFeed\RSSItem;
 
 class MessageFactory

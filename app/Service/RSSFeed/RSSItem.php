@@ -21,6 +21,8 @@ abstract class RSSItem
     public $post_time;
     public $content;
     public $link;
+
+    public $observer;
 //    public $title;
 
     public function __construct(SimplePie_Item $simple_pie)

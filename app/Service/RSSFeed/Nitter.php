@@ -4,6 +4,7 @@
 namespace App\Service\RSSFeed;
 
 
+use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use SimplePie_Item;
 
@@ -14,9 +15,10 @@ class Nitter extends RSSItem
 //    public $content;
 //    public $link;
 
-    public function __construct(SimplePie_Item $simple_pie)
+    public function __construct(SimplePie_Item $simple_pie, $observer)
     {
-        $this->source='Twitter';
+        $this->source = 'Twitter';
+        $this->observer = $observer;
         parent::__construct($simple_pie);
     }
 
@@ -62,6 +64,9 @@ class Nitter extends RSSItem
         $pubDate = Arr::get($original_data, 'pubDate', 'Not Found pubData');
         // TODO carbon 時間轉換
         $this->post_time = Arr::get($pubDate, '0.data', 'Not Found Date Time String');
+        $this->post_time=new Carbon($this->post_time);
+//        dump(new Carbon($this->post_time));
+//        dump((new Carbon($this->post_time))->toDateTimeString());
     }
 
     protected function initialContent()
@@ -83,7 +88,7 @@ class Nitter extends RSSItem
 
         $post_uid_with_sharp = Arr::last(explode("/", $nitter_link));
         $post_uid = Arr::first(explode("#", $post_uid_with_sharp));
-$this->link='https://twitter.com/'.$this->author_account.'/status/'.$post_uid;
+        $this->link = 'https://twitter.com/' . $this->author_account . '/status/' . $post_uid;
 //        dump($post_uid);
     }
 

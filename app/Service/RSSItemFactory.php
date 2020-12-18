@@ -14,10 +14,10 @@ class RSSItemFactory
     {
         switch ($subscribe['type']) {
             case 'Nitter';
-                $RSSItem = new Nitter($rss_item);
+                $RSSItem = new Nitter($rss_item, $subscribe['observer']);
                 break;
             case 'Github';
-                $RSSItem = new Github($rss_item);
+                $RSSItem = new Github($rss_item, $subscribe['observer']);
                 break;
         }
         return $RSSItem;
