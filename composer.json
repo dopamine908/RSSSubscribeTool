@@ -9,12 +9,16 @@
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.0",
+        "awssat/discord-notification-channel": "^1.4",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
+        "laravel-notification-channels/discord": "^1.2",
         "laravel/framework": "^8.12",
+        "laravel/slack-notification-channel": "^2.3",
         "laravel/tinker": "^2.5",
-        "vedmant/laravel-feed-reader": "^1.5"
+        "vedmant/laravel-feed-reader": "^1.5",
+      "ext-simplexml": "*"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
