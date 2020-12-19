@@ -45,13 +45,13 @@ class FetchRSSJob implements ShouldQueue
 //        dump($RSSCollection);
 //        exit();
 
-$Filter = new RSSCollectionFilter();
-$BroadcastTarget = $Filter->getNotBroadcastYet($RSSCollection);
-dump($BroadcastTarget);
+        $Filter = new RSSCollectionFilter();
+        $BroadcastTarget = $Filter->getNotBroadcastYet($RSSCollection);
+        dump($BroadcastTarget);
 //        exit();
 
-$Dispatcher = new Dispatcher();
-$Dispatcher->broadcastAll($BroadcastTarget);
+        $Dispatcher = new Dispatcher();
+        $Dispatcher->broadcastAll($BroadcastTarget);
 //        exit();
 
         if ($BroadcastTarget->isNotEmpty()) {
