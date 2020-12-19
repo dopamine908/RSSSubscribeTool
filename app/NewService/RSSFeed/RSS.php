@@ -25,18 +25,13 @@ abstract class RSS
 
     public $AuthorName;
     public $AuthorAccount;
-//    public $AuthorMainPageUrl;
     public $AuthorIconUrl;
 
-//    public $Title;
-//    public $TitleUrl;
-//    public $TitleRightImage;
     public $MainPageUrl;
     public $PostUrl;
 
     public $Content;
 
-//    public $Footer;
     public $PostTime;
 
     public function __construct(Subscribe $subscribe, object $RSSSimpleXMLElementObject, object $RSSSource)
