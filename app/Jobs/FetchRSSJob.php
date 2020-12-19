@@ -36,23 +36,30 @@ class FetchRSSJob implements ShouldQueue
      */
     public function handle()
     {
-//        dump($this->subscribe);
         $Subscribe = new Subscribe($this->subscribe);
 //        dump($Subscribe);
-        $RSSResourceFactory = new RSSResourceFactory();
-        $RSSCollection=$RSSResourceFactory->createRSSResourceCollection($Subscribe);
-//        dump('$RSSCollection');
-//        dump($RSSCollection);
-        $Filter=new RSSCollectionFilter();
-        $BroadcastTarget=$Filter->getNotBroadcastYet($RSSCollection);
-//        dump($BroadcastTarget);
-        $Dispatcher=new Dispatcher();
-        $Dispatcher->broadcastAll($BroadcastTarget);
+//        exit();
 
-        if($BroadcastTarget->isNotEmpty()){
+        $RSSResourceFactory = new RSSResourceFactory();
+        $RSSCollection = $RSSResourceFactory->createRSSResourceCollection($Subscribe);
+//        dump($RSSCollection);
+//        exit();
+
+$Filter = new RSSCollectionFilter();
+$BroadcastTarget = $Filter->getNotBroadcastYet($RSSCollection);
+dump($BroadcastTarget);
+//        exit();
+
+$Dispatcher = new Dispatcher();
+$Dispatcher->broadcastAll($BroadcastTarget);
+//        exit();
+
+        if ($BroadcastTarget->isNotEmpty()) {
             //get latest post and update
-            $RSSHistory=app(RSSHistory::class);
-            $LatestRSS=$RSSHistory->filterLatestRSS($BroadcastTarget);
+
+            /** @var RSSHistory $RSSHistory */
+            $RSSHistory = app(RSSHistory::class);
+            $LatestRSS = $RSSHistory->filterLatestRSS($BroadcastTarget);
 //            dump($LatestRSS);
             dump($RSSHistory->update($Subscribe->Name, $LatestRSS->PostTime));
         }
