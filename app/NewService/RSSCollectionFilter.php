@@ -21,6 +21,7 @@ class RSSCollectionFilter
 
     private function getRSSCurrentPostTime(Collection $RSSCollection): Carbon
     {
+        /** @var RSSHistory $RSSHistory */
         $RSSHistory = app(RSSHistory::class);
         $CurrentPost = $RSSHistory->getLatest($RSSCollection->first()->getSubscribeName());
         return new Carbon($CurrentPost->CurrentPostTime);
