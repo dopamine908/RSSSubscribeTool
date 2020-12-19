@@ -14,25 +14,17 @@ class RSSResourceFactory
     {
         $RSSResourceCollection = new Collection();
         $RSSSimpleXMLElementObject = $this->getRSSSimpleXMLElement($subscribe->FeedUrl);
-//        dump($RSSSimpleXMLElementObject);exit();
+//        dump($RSSSimpleXMLElementObject);
+//        exit();
 
-        foreach ($RSSSimpleXMLElementObject->channel->item as $ItemKey => $RSSSource) {
-//            $j = json_encode($RSSSource);
-//            $o = json_decode($j);
-//            dump($o);
-//            dump($ItemKey);
-//            dump($RSSSource);
-//            dump($RSSSource->link);
-//            dump($RSSSource->description);
-//            dump((string)$RSSSource->content);
-//            dump('------');
-            $RSSResource = $this->createRSSResource($subscribe, $RSSSimpleXMLElementObject,$RSSSource);
-            $RSSResourceCollection->push($RSSResource);
-//            dump('result');
+        // TODO 拿資料的方式不一樣
+//        foreach ($RSSSimpleXMLElementObject->channel->item as $ItemKey => $RSSSource) {
+        foreach ($RSSSimpleXMLElementObject->entry as $ItemKey => $RSSSource) {
+            $RSSResource = $this->createRSSResource($subscribe, $RSSSimpleXMLElementObject, $RSSSource);
 //            dump($RSSResource);
+            $RSSResourceCollection->push($RSSResource);
 //            exit();
         }
-//        exit();
         return $RSSResourceCollection;
     }
 
@@ -45,17 +37,19 @@ class RSSResourceFactory
     private function createRSSResource(Subscribe $subscribe, object $RSSSimpleXMLElementObject, object $RSSSource): RSS
     {
 //        dump($subscribe->Type);
+//        exit;
         switch ($subscribe->Type) {
             case 'Twitter':
                 $RSSResource = new Twitter($subscribe, $RSSSimpleXMLElementObject, $RSSSource);
                 break;
-//            case 'Github':
-//                $RSSResource = new Github($subscribe, $RSSResource);
-//                break;
+            case 'Github':
+                $RSSResource = new Github($subscribe, $RSSSimpleXMLElementObject, $RSSSource);
+                break;
 //            case 'YouTube':
 //                $RSSResource = new YouTube($subscribe, $RSSResource);
 //                break;
         }
+//        dump($RSSResource);
         return $RSSResource;
     }
 }
