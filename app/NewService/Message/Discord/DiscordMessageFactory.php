@@ -7,12 +7,9 @@ namespace App\NewService\Message\Discord;
 use App\NewService\Message\AbstractFactory;
 use App\NewService\Message\MessageTemplate;
 use App\NewService\RSSFeed\RSS;
-use Awssat\Notifications\Messages\DiscordMessage;
 
 class DiscordMessageFactory extends AbstractFactory
 {
-
-
     public function createTwitterMessage(RSS $RSSItem): MessageTemplate
     {
         return new Twitter($RSSItem);
@@ -20,7 +17,7 @@ class DiscordMessageFactory extends AbstractFactory
 
     public function createGithubMessage(RSS $RSSItem): MessageTemplate
     {
-        // TODO: Implement createGithubMessage() method.
+        return new Github($RSSItem);
     }
 
     public function createYoutubeMessage(RSS $RSSItem): MessageTemplate
@@ -28,12 +25,15 @@ class DiscordMessageFactory extends AbstractFactory
         // TODO: Implement createYoutubeMessage() method.
     }
 
-    public function createMessage(RSS $RSSItem):IExportDiscordMessage
+    public function createMessage(RSS $RSSItem): IExportDiscordMessage
     {
-        $subscribe_type=$RSSItem->getSubscribeType();
-        switch ($subscribe_type){
+        $subscribe_type = $RSSItem->getSubscribeType();
+        switch ($subscribe_type) {
             case 'Twitter':
-                $Message=$this->createTwitterMessage($RSSItem);
+                $Message = $this->createTwitterMessage($RSSItem);
+                break;
+            case 'Github':
+                $Message = $this->createGithubMessage($RSSItem);
                 break;
         }
 //        dump($Message);
