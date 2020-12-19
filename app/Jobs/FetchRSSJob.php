@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\NewService\Dispatcher\Dispatcher;
+use App\NewService\Dispatcher;
 use App\NewService\RSSCollectionFilter;
 use App\NewService\RSSFeed\RSSResourceFactory;
 use App\NewService\RSSHistory;

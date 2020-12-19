@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\NewService\Dispatcher;
+namespace App\NewService;
 
 
 use App\Jobs\NotificationJob;
