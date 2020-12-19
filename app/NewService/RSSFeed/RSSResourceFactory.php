@@ -16,16 +16,31 @@ class RSSResourceFactory
         $RSSSimpleXMLElementObject = $this->getRSSSimpleXMLElement($subscribe->FeedUrl);
 //        dump($RSSSimpleXMLElementObject);
 //        exit();
-
-        // TODO 拿資料的方式不一樣
-//        foreach ($RSSSimpleXMLElementObject->channel->item as $ItemKey => $RSSSource) {
-        foreach ($RSSSimpleXMLElementObject->entry as $ItemKey => $RSSSource) {
+        foreach (
+            $this->getRSSSimpleXMLElementObjectItem(
+                $RSSSimpleXMLElementObject,
+                $subscribe->Type
+            ) as $ItemKey => $RSSSource
+        ) {
             $RSSResource = $this->createRSSResource($subscribe, $RSSSimpleXMLElementObject, $RSSSource);
 //            dump($RSSResource);
             $RSSResourceCollection->push($RSSResource);
 //            exit();
         }
         return $RSSResourceCollection;
+    }
+
+    public function getRSSSimpleXMLElementObjectItem($RSSSimpleXMLElementObject, string $subscribe_name)
+    {
+        switch ($subscribe_name) {
+            case 'Twitter':
+                $RSSSimpleXMLElementObjectItem = $RSSSimpleXMLElementObject->channel->item;
+                break;
+            case 'Github':
+                $RSSSimpleXMLElementObjectItem = $RSSSimpleXMLElementObject->entry;
+                break;
+        }
+        return $RSSSimpleXMLElementObjectItem;
     }
 
     private function getRSSSimpleXMLElement(string $feed_url): object
