@@ -11,9 +11,14 @@ use App\NewService\RSSFeed\RSS;
 class SlackMessageFactory extends AbstractFactory
 {
 
+    public function createTwitterMessage(RSS $RSSItem): MessageTemplate
+    {
+        return new Twitter($RSSItem);
+    }
+
     public function createGithubMessage(RSS $RSSItem): MessageTemplate
     {
-        // TODO: Implement createGithubMessage() method.
+        return new Github($RSSItem);
     }
 
     public function createYoutubeMessage(RSS $RSSItem): MessageTemplate
@@ -29,16 +34,11 @@ class SlackMessageFactory extends AbstractFactory
                 $Message = $this->createTwitterMessage($RSSItem);
                 break;
             case 'Github':
-//                $Message = $this->createGithubMessage($RSSItem);
+                $Message = $this->createGithubMessage($RSSItem);
                 break;
         }
 //        dump($Message);
         return $Message;
-    }
-
-    public function createTwitterMessage(RSS $RSSItem): MessageTemplate
-    {
-        return new Twitter($RSSItem);
     }
 
 }
