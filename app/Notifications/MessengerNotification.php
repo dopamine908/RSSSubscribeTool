@@ -3,7 +3,7 @@
 namespace App\Notifications;
 
 use App\NewService\Message\Discord\DiscordMessageFactory;
-use Awssat\Notifications\Messages\DiscordMessage;
+use App\NewService\Message\Slack\SlackMessageFactory;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Str;
@@ -64,6 +64,13 @@ class MessengerNotification extends Notification
 //                        );
 //                }
 //            );
+    }
+
+    public function toSlack($notifiable)
+    {
+        $SlackMessageFactory = new SlackMessageFactory();
+        $SlackMessage = $SlackMessageFactory->createMessage($notifiable);
+        return $SlackMessage->exportSlackMessage();
     }
 }
 
