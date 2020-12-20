@@ -83,7 +83,7 @@ class Twitter extends MessageTemplate implements IExportSlackMessage
                         )->author(
                             $this->AuthorName,
                             $this->AuthorMainPageUrl,
-                            $this->TitleRightImage
+                            $this->TitleLeftImage
                         )
                         ->content(
                             $this->Description
