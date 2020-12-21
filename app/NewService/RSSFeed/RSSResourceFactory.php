@@ -14,8 +14,7 @@ class RSSResourceFactory
     {
         $RSSResourceCollection = new Collection();
         $RSSSimpleXMLElementObject = $this->getRSSSimpleXMLElement($subscribe->FeedUrl);
-//        dump($RSSSimpleXMLElementObject);
-//        exit();
+
         foreach (
             $this->getRSSSimpleXMLElementObjectItem(
                 $RSSSimpleXMLElementObject,
@@ -23,9 +22,7 @@ class RSSResourceFactory
             ) as $ItemKey => $RSSSource
         ) {
             $RSSResource = $this->createRSSResource($subscribe, $RSSSimpleXMLElementObject, $RSSSource);
-//            dump($RSSResource);
             $RSSResourceCollection->push($RSSResource);
-//            exit();
         }
         return $RSSResourceCollection;
     }
@@ -37,6 +34,7 @@ class RSSResourceFactory
                 $RSSSimpleXMLElementObjectItem = $RSSSimpleXMLElementObject->channel->item;
                 break;
             case 'Github':
+            case 'YouTube':
                 $RSSSimpleXMLElementObjectItem = $RSSSimpleXMLElementObject->entry;
                 break;
         }
@@ -51,8 +49,6 @@ class RSSResourceFactory
 
     private function createRSSResource(Subscribe $subscribe, object $RSSSimpleXMLElementObject, object $RSSSource): RSS
     {
-//        dump($subscribe->Type);
-//        exit;
         switch ($subscribe->Type) {
             case 'Twitter':
                 $RSSResource = new Twitter($subscribe, $RSSSimpleXMLElementObject, $RSSSource);
@@ -60,11 +56,12 @@ class RSSResourceFactory
             case 'Github':
                 $RSSResource = new Github($subscribe, $RSSSimpleXMLElementObject, $RSSSource);
                 break;
-//            case 'YouTube':
-//                $RSSResource = new YouTube($subscribe, $RSSResource);
-//                break;
+            case 'YouTube':
+                $RSSResource = new YouTube($subscribe, $RSSSimpleXMLElementObject, $RSSSource);
+                break;
+            default:
+                dd('RSSResourceFactory createRSSResource cant match subscribe type');
         }
-//        dump($RSSResource);
         return $RSSResource;
     }
 }
