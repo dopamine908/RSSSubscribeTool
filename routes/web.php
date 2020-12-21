@@ -13,21 +13,26 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-use Vedmant\FeedReader\Facades\FeedReader;
-use Illuminate\Support\Arr;
-Route::get('/', function () {
-//    FeedReader::read('https://github.com/laravel/framework/releases.atom');
-//    dump(FeedReader::read('https://github.com/laravel/framework/releases.atom'));
-    dump(FeedReader::read('https://nitter.net/Dopamin908/rss')->get_items());
-//    dump(FeedReader::read('https://nitter.net/Dopamin908/rss'));
-
-    $rss_items=FeedReader::read('https://nitter.net/Dopamin908/rss')->get_items();
-    foreach ($rss_items as $rss_item){
-//        dump($rss_item->data);
-//        Arr::get($rss_item->data,'child','child not found');
-        $child_data=Arr::get($rss_item->data,'child','child not found');
-//        dump($child_data);
-
-        dump(Arr::get($child_data,'', 'empty key value not found'));
-    }
-});
+//
+//Route::get(
+//    'test',
+//    function () {
+//        $Job = new \App\Jobs\FetchRSSJob('laravelnews');
+//        $Job->handle();
+//
+//        $Job = new \App\Jobs\FetchRSSJob('taylorotwell');
+//        $Job->handle();
+//
+//        $Job = new \App\Jobs\FetchRSSJob('laravel');
+//        $Job->handle();
+//
+//        $Job = new \App\Jobs\FetchRSSJob('angular');
+//        $Job->handle();
+//
+//        $Job = new \App\Jobs\FetchRSSJob('howhow');
+//        $Job->handle();
+//
+//        $Job = new \App\Jobs\FetchRSSJob('verisik');
+//        $Job->handle();
+//    }
+//);
