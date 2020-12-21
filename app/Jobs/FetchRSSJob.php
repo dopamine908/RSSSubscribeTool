@@ -47,7 +47,8 @@ class FetchRSSJob implements ShouldQueue
 
         $Filter = new RSSCollectionFilter();
         $BroadcastTarget = $Filter->getNotBroadcastYet($RSSCollection);
-        dump($BroadcastTarget);
+        dump($BroadcastTarget->count() . ' jobs to dispatch');
+//        dump($BroadcastTarget);
 //        exit();
 
         $Dispatcher = new Dispatcher();
@@ -61,7 +62,8 @@ class FetchRSSJob implements ShouldQueue
             $RSSHistory = app(RSSHistory::class);
             $LatestRSS = $RSSHistory->filterLatestRSS($BroadcastTarget);
 //            dump($LatestRSS);
-            dump($RSSHistory->update($Subscribe->Name, $LatestRSS->PostTime));
+            $update_latest_rss_history = $RSSHistory->update($Subscribe->Name, $LatestRSS->PostTime);
+            dump($update_latest_rss_history);
         }
     }
 }
