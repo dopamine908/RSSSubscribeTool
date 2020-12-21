@@ -23,7 +23,7 @@ class SlackMessageFactory extends AbstractFactory
 
     public function createYoutubeMessage(RSS $RSSItem): MessageTemplate
     {
-        // TODO: Implement createYoutubeMessage() method.
+        return new Youtube($RSSItem);
     }
 
     public function createMessage(RSS $RSSItem): IExportSlackMessage
@@ -36,6 +36,11 @@ class SlackMessageFactory extends AbstractFactory
             case 'Github':
                 $Message = $this->createGithubMessage($RSSItem);
                 break;
+            case 'YouTube':
+                $Message = $this->createYoutubeMessage($RSSItem);
+                break;
+            default:
+                dd('SlackMessageFactory createMessage cant match subscribe type');
         }
 //        dump($Message);
         return $Message;
