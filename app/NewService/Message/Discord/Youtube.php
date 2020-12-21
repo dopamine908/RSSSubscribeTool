@@ -21,7 +21,7 @@ class Youtube extends MessageTemplate implements IExportDiscordMessage
 
     public function initialMessageContent(): void
     {
-        $this->MessageContent = $this->RSSItem->AuthorName . ' 有一則新貼文';
+        $this->MessageContent = $this->RSSItem->AuthorName . ' 有新影片';
     }
 
     public function initialColor(): void
